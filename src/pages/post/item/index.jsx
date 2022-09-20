@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-
+import Icon, { DeleteOutlined } from "@ant-design/icons";
 function ItemPost(props) {
   const { author, time, content } = props;
   return (
-    <div className="box rounded-sm w-full border border-slate-50 border-solid p-4 mb-4">
+    <div className="box rounded-sm w-full border border-slate-50 border-solid p-4 mb-10 relative">
       <div className="flex items-center mb-4">
         <p className="">
           Author: <span className="font-medium">Tin</span>
@@ -31,6 +31,9 @@ function ItemPost(props) {
         over the years, sometimes by accident, sometimes on purpose (injected
         humour and the like).
       </p>
+      <div className="absolute top-[-26px] px-2 py-1 rounded-sm bg-red-600 right-1">
+        <DeleteOutlined />
+      </div>
     </div>
   );
 }
