@@ -24,3 +24,9 @@ a {
 p {
   margin: 0;
 }
+.error-label {
+  color: #d2001a;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 2px;
+}

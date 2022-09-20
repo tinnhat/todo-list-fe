@@ -3,10 +3,12 @@ import PropTypes from "prop-types";
 import FormLogin from "../../components/formLogin";
 import FormRegister from "../../components/formRegister";
 import { Input } from "antd";
+import { useDispatch } from "react-redux";
 
 function Login(props) {
   const [show, setShow] = useState(true);
   const [forgotPass, setForgotPass] = useState(false);
+
   return (
     <div className="app bg-[#16213E]">
       <div className="container mx-auto  h-screen flex items-center justify-center">

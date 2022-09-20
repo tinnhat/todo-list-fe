@@ -1,57 +1,33 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { Input, Modal, Upload } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Button, Input, Upload } from "antd";
+import React, { useEffect, useState } from "react";
 import openNotificationWithIcon from "../notification/notification";
-const getBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onload = () => resolve(reader.result);
-
-    reader.onerror = (error) => reject(error);
-  });
-const uploadButton = (
-  <div>
-    <PlusOutlined />
-    <div
-      style={{
-        marginTop: 8,
-      }}
-    >
-      Upload
-    </div>
-  </div>
-);
 function FormRegister(props) {
   const { setForgotPass } = props;
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewTitle, setPreviewTitle] = useState("");
-  const [fileList, setFileList] = useState([]);
-  const handleCancel = () => setPreviewOpen(false);
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImg, setPreviewImg] = useState("");
+  useEffect(() => {
+    if (selectedFile) {
+      const objectUrl = URL.createObjectURL(selectedFile);
+      // console.log(objectUrl);
+      setPreviewImg(objectUrl);
     }
-
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    );
-  };
-
-  const handleChange = ({ fileList: newFileList }) => {
-    if (newFileList[0].type === "png" || newFileList[0].type === "jpg") {
-      setFileList(newFileList);
-    } else {
+  }, [selectedFile]);
+  const handleChange = (file) => {
+    if (file.fileList.length > 0) {
+      if (file.file.type === "image/png" || file.file.type === "image/jpeg") {
+        setSelectedFile(file.file);
+        return;
+      }
       openNotificationWithIcon(
-        "success",
-        "Invalid file type",
-        "only file PNG or JPEG images are supported"
+        "error",
+        "Invalid image file",
+        "Only file PNG or JPEG images are allowed"
       );
+      setPreviewImg("");
+      setSelectedFile(null);
+    } else {
+      setPreviewImg("");
+      setSelectedFile(null);
     }
   };
   return (
@@ -74,30 +50,10 @@ function FormRegister(props) {
       <div className="mb-4">
         <Input placeholder="RePassword" type="password" />
       </div>
-      <>
-        <Upload
-          listType="picture-card"
-          onPreview={handlePreview}
-          onChange={handleChange}
-          maxCount={1}
-        >
-          {uploadButton}
-        </Upload>
-        <Modal
-          open={previewOpen}
-          title={previewTitle}
-          footer={null}
-          onCancel={handleCancel}
-        >
-          <img
-            alt="example"
-            style={{
-              width: "100%",
-            }}
-            src={previewImage}
-          />
-        </Modal>
-      </>
+      <Upload maxCount={1} beforeUpload={() => false} onChange={handleChange}>
+        <Button>Upload</Button>
+      </Upload>
+      <img src={previewImg} alt="" />
       <a
         className="text-sm text-gray-300 hover:text-gray-100"
         onClick={() => setForgotPass(true)}
@@ -115,4 +71,4 @@ function FormRegister(props) {
 
 FormRegister.propTypes = {};
 
-export default FormRegister;
+export default React.memo(FormRegister);
