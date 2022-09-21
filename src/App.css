@@ -25,8 +25,8 @@ p {
   margin: 0;
 }
 .error-label {
-  color: #d2001a;
+  color: #ff0000;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 12px;
   margin-bottom: 2px;
 }

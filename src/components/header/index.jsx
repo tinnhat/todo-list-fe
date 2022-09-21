@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
 function Header(props) {
+  const { user } = props;
   const [show, setShow] = useState(false);
   return (
     <div className="bg-[#293462] ">
@@ -31,7 +32,7 @@ function Header(props) {
           className="relative flex cursor-pointer"
           onClick={() => setShow(!show)}
         >
-          <p className="pr-2">Nhat tin</p>
+          <p className="pr-2">{user?.fullname}</p>
           <Avatar size="small" icon={<UserOutlined />} />
           {show && (
             <div className="absolute w-40 right-0 bg-[#30475E] mt-8">

@@ -1,38 +1,37 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Icon, { DeleteOutlined } from "@ant-design/icons";
+import fetchDataAPI from "../../../api/configApi";
+import moment from "moment";
 function ItemPost(props) {
-  const { author, time, content } = props;
+  const { item, fetchData } = props;
+  const handleDelete = async () => {
+    await fetchDataAPI(`api/delete/${item._id}`, "DELETE")
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+    fetchData();
+  };
+
   return (
     <div className="box rounded-sm w-full border border-slate-50 border-solid p-4 mb-10 relative">
       <div className="flex items-center mb-4">
         <p className="">
-          Author: <span className="font-medium">Tin</span>
+          Author: <span className="font-medium">{item.author}</span>
         </p>
-        <p className="ml-2 text-sm">20/9/2022</p>
+        <p className="ml-2 text-sm">
+          {moment(item.createDate).format("DD/MM/YYYY hh:mm")}
+        </p>
       </div>
-      <p>
-        What is Lorem Ipsum?Lorem Ipsum is simply dummy text of the printing and
-        typesetting industry. Lorem Ipsum has been the industry's standard dummy
-        text ever since the 1500s, when an unknown printer took a galley of type
-        and scrambled it to make a type specimen book. It has survived not only
-        five centuries, but also the leap into electronic typesetting, remaining
-        essentially unchanged. It was popularised in the 1960s with the release
-        of Letraset sheets containing Lorem Ipsum passages, and more recently
-        with desktop publishing software like Aldus PageMaker including versions
-        of Lorem Ipsum.Why do we use it?It is a long established fact that a
-        reader will be distracted by the readable content of a page when looking
-        at its layout. The point of using Lorem Ipsum is that it has a
-        more-or-less normal distribution of letters, as opposed to using
-        'Content here, content here', making it look like readable English. Many
-        desktop publishing packages and web page editors now use Lorem Ipsum as
-        their default model text, and a search for 'lorem ipsum' will uncover
-        many web sites still in their infancy. Various versions have evolved
-        over the years, sometimes by accident, sometimes on purpose (injected
-        humour and the like).
-      </p>
-      <div className="absolute top-[-26px] px-2 py-1 rounded-sm bg-red-600 right-1">
-        <DeleteOutlined />
+      <p>{item.content}</p>
+      <div
+        className="absolute top-[-26px] px-2 py-1 rounded-sm bg-red-600 right-1"
+        onClick={handleDelete}
+      >
+        <DeleteOutlined className="cursor-pointer" />
       </div>
     </div>
   );

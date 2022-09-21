@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Input } from "antd";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import InputField from "../Input";
+import { login } from "../../redux/actions/user";
 const schema = yup
   .object({
     username: yup.string().required(),
@@ -25,24 +26,23 @@ function FormLogin(props) {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    dispatch(login(data));
   };
-  console.log(watch().username);
   return (
     <div className="bg-[#30475E] p-4">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <p className="error-label">{errors.username?.message}</p>
-          <input
-            {...register("username")}
-            // control={control}
-            // placeholder="Username"
-            // name={register("username", { required: true })}
+
+          <InputField
+            control={control}
+            placeholder="Username"
+            name={register("username", { required: true })}
           />
         </div>
         <div className="mb-4">
           <p className="error-label">{errors.password?.message}</p>
-          <Input
+          <InputField
             control={control}
             placeholder="Password"
             type="password"
