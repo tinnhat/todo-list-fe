@@ -1,21 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import FormLogin from "../../components/formLogin";
 import FormRegister from "../../components/formRegister";
 import InputField from "../../components/Input";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
 const schema = yup
   .object({
     username: yup.string().required(),
   })
   .required();
 function Login(props) {
+  const { user } = props;
   const [show, setShow] = useState(true);
   const [forgotPass, setForgotPass] = useState(false);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -28,6 +31,11 @@ function Login(props) {
   const onSubmit = (data) => {
     console.log(data);
   };
+  useEffect(() => {
+    if (user) {
+      navigate("/todo");
+    }
+  }, []);
   return (
     <div className="app bg-[#16213E]">
       <div className="container mx-auto  h-screen flex items-center justify-center">

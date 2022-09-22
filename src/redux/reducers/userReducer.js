@@ -8,7 +8,7 @@ const userReducer = (state = initialUser, action) => {
     case LOGIN:
       return {
         ...state,
-        user: action.payload.user,
+        user: action.payload?.user,
       };
     case GET_USER:
       return {
@@ -16,10 +16,7 @@ const userReducer = (state = initialUser, action) => {
         user: action.payload.result,
       };
     case LOGOUT:
-      return {
-        ...state,
-        user: null,
-      };
+      return { ...state, user: null };
     default:
       return state;
   }

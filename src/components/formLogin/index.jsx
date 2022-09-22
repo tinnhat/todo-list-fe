@@ -6,6 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputField from "../Input";
 import { login } from "../../redux/actions/user";
+import { useNavigate } from "react-router-dom";
 const schema = yup
   .object({
     username: yup.string().required(),
@@ -15,6 +16,7 @@ const schema = yup
 function FormLogin(props) {
   const { setForgotPass } = props;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -25,8 +27,11 @@ function FormLogin(props) {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    dispatch(login(data));
+  const onSubmit = async (data) => {
+    const result = await dispatch(login(data));
+    if (result) {
+      navigate("/todo");
+    }
   };
   return (
     <div className="bg-[#30475E] p-4">

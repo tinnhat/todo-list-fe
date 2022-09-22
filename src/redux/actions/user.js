@@ -1,6 +1,6 @@
 import fetchDataAPI from "../../api/configApi";
 import openNotificationWithIcon from "../../components/notification/notification";
-import { LOGIN } from "../types";
+import { LOGIN, LOGOUT } from "../types";
 
 export const login = (data) => async (dispatch) => {
   const response = await fetchDataAPI("user/signin", "POST", data)
@@ -11,20 +11,7 @@ export const login = (data) => async (dispatch) => {
         type: LOGIN,
         payload: res.data,
       });
-    })
-    .catch((err) => {
-      console.log(err.response);
-      openNotificationWithIcon("error", err.response.data.message);
-    });
-};
-export const get_info_user = (id) => async (dispatch) => {
-  const response = await fetchDataAPI(`user/getOne/${id}`)
-    .then((res) => {
-      console.log(res);
-      return dispatch({
-        type: LOGIN,
-        payload: res.data.result,
-      });
+      return true;
     })
     .catch((err) => {
       console.log(err.response);
@@ -32,4 +19,27 @@ export const get_info_user = (id) => async (dispatch) => {
       return false;
     });
   return response;
+};
+export const get_info_user = (id) => async (dispatch) => {
+  const response = await fetchDataAPI(`user/getOne/${id}`)
+    .then((res) => {
+      console.log(res);
+      dispatch({
+        type: LOGIN,
+        payload: res.data.result,
+      });
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err.response);
+      openNotificationWithIcon("error", err.response.data.message);
+      return false;
+    });
+  return response;
+};
+export const logout = () => async (dispatch) => {
+  localStorage.clear();
+  dispatch({
+    type: LOGOUT,
+  });
 };

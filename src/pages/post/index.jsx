@@ -19,7 +19,8 @@ function Post(props) {
     watch,
   } = useForm();
   const fetchData = () => {
-    fetchDataAPI(`api/getOne/${user._id}`).then((res) => {
+    fetchDataAPI(`api/getAll`).then((res) => {
+      console.log(res);
       setPosts(res.data);
     });
   };
