@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
@@ -7,7 +7,7 @@ import { LOGOUT } from "../../redux/types";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/actions/user";
 function Header(props) {
-  const { user } = props;
+  const user = JSON.parse(localStorage.getItem("user"));
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ function Header(props) {
           <ul className="flex">
             <li>
               <a
-                href="/todo"
+                href="todo"
                 className="p-4 block hover:bg-slate-500 hover:text-white transition-all"
               >
                 To do
@@ -32,7 +32,7 @@ function Header(props) {
             </li>
             <li className="ml-4">
               <a
-                href="/post"
+                href="post"
                 className="p-4 block hover:bg-slate-500 hover:text-white transition-all"
               >
                 Post
@@ -44,15 +44,15 @@ function Header(props) {
           className="relative flex cursor-pointer"
           onClick={() => setShow(!show)}
         >
-          <p className="pr-2">{user?.username}</p>
+          <p className="pr-2">{user?.fullname}</p>
           <Avatar size="small" icon={<UserOutlined />} />
-          {show && (
+          {user && show ? (
             <div className="absolute w-40 right-0 bg-[#30475E] mt-8">
-              <p className="p-3 cursor-pointer hover:bg-[#1C3879] transition-all">
+              <p
+                className="p-3 cursor-pointer hover:bg-[#1C3879] transition-all"
+                onClick={() => navigate("/profile")}
+              >
                 Profile
-              </p>
-              <p className="p-3 cursor-pointer hover:bg-[#1C3879] transition-all">
-                Change password
               </p>
               <p
                 className="p-3 cursor-pointer hover:bg-[#1C3879] transition-all"
@@ -61,6 +61,8 @@ function Header(props) {
                 Logout
               </p>
             </div>
+          ) : (
+            ""
           )}
         </div>
       </div>

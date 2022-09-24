@@ -1,6 +1,6 @@
 import fetchDataAPI from "../../api/configApi";
 import openNotificationWithIcon from "../../components/notification/notification";
-import { LOGIN, LOGOUT } from "../types";
+import { LOGIN, LOGOUT, CLEAR_TOKEN } from "../types";
 
 export const login = (data) => async (dispatch) => {
   const response = await fetchDataAPI("user/signin", "POST", data)
@@ -32,7 +32,10 @@ export const get_info_user = (id) => async (dispatch) => {
     })
     .catch((err) => {
       console.log(err.response);
-      openNotificationWithIcon("error", err.response.data.message);
+      //xóa token
+      dispatch({ type: CLEAR_TOKEN });
+      localStorage.clear();
+      // openNotificationWithIcon("error", err.response.data.message);
       return false;
     });
   return response;

@@ -6,6 +6,7 @@ import "./App.css";
 import Header from "./components/header";
 import Login from "./pages/login";
 import Post from "./pages/post";
+import Profile from "./pages/profile";
 import Todo from "./pages/todo";
 import { get_info_user } from "./redux/actions/user";
 import PrivateRoute from "./utils/privateRoute";
@@ -21,11 +22,14 @@ function App() {
       // console.log("login");
     }
   }, []);
+
   return (
     <main>
-      <Header user={userLogged} />
+      <Header />
       <Routes>
         <Route path="/" element={<Login user={userLogged} />} />
+        <Route path="/profile" element={<Profile />} />
+
         <Route element={<PrivateRoute />}>
           <Route path="/todo" element={<Todo />} />
           <Route path="/post" element={<Post />} />
