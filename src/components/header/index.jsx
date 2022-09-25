@@ -19,7 +19,7 @@ function Header(props) {
 
   return (
     <div className="bg-[#293462] ">
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="w-full lg:w-10/12 xl:w-10/12 2xl:w-10/12 mx-auto flex items-center justify-between">
         <div>
           <ul className="flex">
             <li>

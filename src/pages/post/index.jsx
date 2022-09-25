@@ -44,7 +44,7 @@ function Post(props) {
   };
   return (
     <div className="bg-[#16213E] min-h-screen">
-      <div className="container mx-auto">
+      <div className="w-3/4 mx-auto">
         <div className="pt-20 text-center">
           <p className=" text-4xl uppercase font-medium">Share your post</p>
         </div>

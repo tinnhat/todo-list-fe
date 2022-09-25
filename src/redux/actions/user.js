@@ -46,3 +46,48 @@ export const logout = () => async (dispatch) => {
     type: LOGOUT,
   });
 };
+export const registerUser = (data) => async (dispatch) => {
+  const response = await fetchDataAPI("user/register", "POST", data)
+    .then((res) => {
+      console.log(res);
+      return true;
+    })
+    .catch((err) => {
+      console.log(err.response);
+      openNotificationWithIcon("error", err.response.data.message);
+      return false;
+    });
+  return response;
+};
+export const uploadAvatar = (data) => async (dispatch) => {
+  const response = await fetchDataAPI(
+    "api/uploadFile",
+    "POST",
+    data,
+    "multipart/form-data"
+  )
+    .then((res) => {
+      console.log(res);
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err.response);
+      openNotificationWithIcon("error", err.response.data.message);
+      return false;
+    });
+  return response;
+};
+export const updateInfoUser = (data) => async (dispatch) => {
+  console.log(data);
+  const response = await fetchDataAPI(`user/update/${data._id}`, "PATCH", data)
+    .then((res) => {
+      console.log(res);
+      return true;
+    })
+    .catch((err) => {
+      console.log(err.response);
+      openNotificationWithIcon("error", err.response.data.message);
+      return false;
+    });
+  return response;
+};

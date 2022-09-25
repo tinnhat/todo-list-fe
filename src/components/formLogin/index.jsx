@@ -34,7 +34,7 @@ function FormLogin(props) {
     }
   };
   return (
-    <div className="bg-[#30475E] p-4">
+    <div className="bg-[#4C6793] p-4 w-full">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <p className="error-label">{errors.username?.message}</p>

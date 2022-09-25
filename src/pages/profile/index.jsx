@@ -4,13 +4,19 @@ import { Button, Image, Upload } from "antd";
 import openNotificationWithIcon from "../../components/notification/notification";
 import { useForm } from "react-hook-form";
 import InputField from "../../components/Input";
+import fetchDataAPI from "../../api/configApi";
+import { useDispatch } from "react-redux";
+import { updateInfoUser, uploadAvatar } from "../../redux/actions/user";
 const Profile = (props) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImg, setPreviewImg] = useState("");
+  const dispatch = useDispatch();
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [id, setId] = useState(null);
   const {
     register,
     handleSubmit,
+    setValue,
     control,
     formState: { errors },
     watch,
@@ -22,6 +28,21 @@ const Profile = (props) => {
       setPreviewImg(objectUrl);
     }
   }, [selectedFile]);
+  const callData = () => {
+    fetchDataAPI("user/profile", "POST")
+      .then((res) => {
+        setId(res.data.message._id);
+        setValue("email", res.data.message?.email);
+        setValue("fullname", res.data.message?.fullname);
+        setValue("phone", res.data.message?.phone);
+        setValue("oldpassword", res.data.message?.password);
+        setPreviewImg(res.data.message?.avatar);
+      })
+      .catch((err) => console.log(err.response));
+  };
+  useEffect(() => {
+    callData();
+  }, []);
   const handleChange = (file) => {
     if (file.fileList.length > 0) {
       if (file.file.type === "image/png" || file.file.type === "image/jpeg") {
@@ -40,20 +61,94 @@ const Profile = (props) => {
       setSelectedFile(null);
     }
   };
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    //có change password
+    if (showChangePassword) {
+      if (watch().password === "" || watch().renewpass === "") {
+        openNotificationWithIcon(
+          "warning",
+          "Please enter your new password or Retype new password",
+          "New password and Retype new password must be same"
+        );
+        return;
+      }
+      if (watch().password !== watch().renewpass) {
+        openNotificationWithIcon(
+          "error",
+          "New password and Retype new password must be same"
+        );
+        return;
+      }
+      if (selectedFile) {
+        // có thay đổi avatar
+        const result = await dispatch(uploadAvatar({ file: selectedFile }));
+        //update info
+        const updateInfo = await dispatch(
+          updateInfoUser({
+            phone: data.phone,
+            fullname: data.fullname,
+            password: data.password,
+            _id: id,
+            avatar: result.link,
+          })
+        );
+        if (updateInfo) {
+          openNotificationWithIcon("success", "Update Info Successfully");
+        }
+      } else {
+        //khoông thay đổi avatar
+        const updateInfo = await dispatch(
+          updateInfoUser({
+            phone: data.phone,
+            fullname: data.fullname,
+            password: data.password,
+            _id: id,
+          })
+        );
+        if (updateInfo) {
+          openNotificationWithIcon("success", "Update Info Successfully");
+        }
+      }
+    } else {
+      //cập nhật ko change pass
+      if (selectedFile) {
+        // có thay đổi avatar
+        const result = await dispatch(uploadAvatar({ file: selectedFile }));
+        //update info
+        const updateInfo = await dispatch(
+          updateInfoUser({
+            phone: data.phone,
+            fullname: data.fullname,
+            _id: id,
+            avatar: result.link,
+          })
+        );
+        if (updateInfo) {
+          openNotificationWithIcon("success", "Update Info Successfully");
+        }
+      } else {
+        //khoông thay đổi avatar
+        const updateInfo = await dispatch(
+          updateInfoUser({
+            phone: data.phone,
+            fullname: data.fullname,
+            _id: id,
+          })
+        );
+        if (updateInfo) {
+          openNotificationWithIcon("success", "Update Info Successfully");
+        }
+      }
+    }
+    callData();
   };
   return (
     <div className="app bg-[#16213E]">
-      <div className="container mx-auto flex-col items-center  h-screen flex  ">
+      <div className="container mx-auto flex-col items-center h-full flex  ">
         <div className="mt-[20px] text-center">
           <img
-            className="w-60 h-60 mb-4"
-            src={
-              previewImg
-                ? previewImg
-                : "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-            }
+            className="w-60 h-60 mb-4 object-contain"
+            src={previewImg ? previewImg : ""}
             alt=""
           />
           <Upload
@@ -64,9 +159,12 @@ const Profile = (props) => {
             <Button>Upload</Button>
           </Upload>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="text-left">
-            <div className="flex mt-10 items-center w-[30vw]">
+        <form
+          className="w-full lg:w-3/5 xl:w-3/5 2xl:w-2/5"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="text-left ">
+            <div className="flex mt-10 items-center ">
               <p className="text-sm min-w-[180px] font-medium uppercase mr-4">
                 Fullname:
               </p>
@@ -74,10 +172,9 @@ const Profile = (props) => {
                 type="text"
                 control={control}
                 name={register("fullname")}
-                value="Nguyễn Nhật Tín"
               />
             </div>
-            <div className="flex mt-10 items-center w-[30vw]">
+            <div className="flex mt-10 items-center ">
               <p className="text-sm min-w-[180px] font-medium uppercase mr-4">
                 Email:
               </p>
@@ -85,11 +182,10 @@ const Profile = (props) => {
                 type="text"
                 control={control}
                 name={register("email")}
-                value="tinnhat0412@gmail.com"
                 disabled
               />
             </div>
-            <div className="flex mt-10 items-center w-[30vw]">
+            <div className="flex mt-10 items-center ">
               <p className="text-sm min-w-[180px] font-medium uppercase mr-4">
                 Phone:
               </p>
@@ -97,10 +193,9 @@ const Profile = (props) => {
                 type="text"
                 control={control}
                 name={register("phone")}
-                value="123123123123"
               />
             </div>
-            <div className="flex mt-10 items-center w-[30vw]">
+            <div className="flex mt-10 items-center ">
               <p className="text-sm min-w-[180px] font-medium uppercase mr-4">
                 Password:
               </p>
@@ -108,7 +203,8 @@ const Profile = (props) => {
                 type="password"
                 value="Nguyễn Nhật Tín"
                 control={control}
-                name={register("password")}
+                name={register("oldpassword")}
+                disabled
               />
             </div>
             {!showChangePassword && (
@@ -122,17 +218,17 @@ const Profile = (props) => {
 
             {showChangePassword && (
               <div>
-                <div className="flex mt-10 items-center w-[30vw]">
+                <div className="flex mt-10 items-center ">
                   <p className="text-sm min-w-[180px]  font-medium uppercase mr-4">
                     New Password:
                   </p>
                   <InputField
                     type="password"
                     control={control}
-                    name={register("newpass")}
+                    name={register("password")}
                   />
                 </div>
-                <div className="flex mt-10 items-center w-[30vw]">
+                <div className="flex mt-10 items-center ">
                   <p className="text-sm min-w-[180px] font-medium uppercase mr-4">
                     Retype new password:
                   </p>
@@ -144,7 +240,14 @@ const Profile = (props) => {
                 </div>
               </div>
             )}
-
+            {showChangePassword && (
+              <button
+                onClick={() => setShowChangePassword(false)}
+                className="uppercase font-medium w-full text-center p-2 text-gray-300 bg-emerald-600 rounded-md  hover:bg-emerald-500 hover:text-white transition-all mt-4"
+              >
+                Hide change password
+              </button>
+            )}
             <button className="uppercase font-medium w-full text-center p-2 text-gray-300 bg-emerald-600 rounded-md  hover:bg-emerald-500 hover:text-white transition-all mt-4">
               Upadte Infomation
             </button>

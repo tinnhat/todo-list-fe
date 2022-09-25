@@ -4,6 +4,7 @@ import { Checkbox } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import fetchDataAPI from "../../../api/configApi";
+import openNotificationWithIcon from "../../../components/notification/notification";
 function Item(props) {
   const { fetchData, item, setValue, setId, setEdit } = props;
 
@@ -14,7 +15,10 @@ function Item(props) {
   };
   const handleDelete = async () => {
     await fetchDataAPI(`todo/delete/${item._id}`, "DELETE")
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res);
+        openNotificationWithIcon("success", "Delete item successfully");
+      })
       .catch((err) => console.log(err));
     fetchData();
   };

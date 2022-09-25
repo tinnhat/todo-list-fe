@@ -41,7 +41,7 @@ function Login(props) {
       <div className="container mx-auto  h-screen flex items-center justify-center">
         <div className="bg-[#444F5A] rounded-sm w-3/12 p-4">
           {forgotPass ? (
-            <div className="bg-[#30475E] p-4">
+            <div className="bg-[#4C6793] p-4">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <h6 className="text-white text-center mb-6">Forgot password</h6>
                 <div className="mb-4">
@@ -72,7 +72,7 @@ function Login(props) {
               <div className="flex items-center justify-between ">
                 <div
                   className={`w-3/6 text-center p-2 ${
-                    show ? "bg-[#30475E]" : ""
+                    show ? "bg-[#4C6793]" : ""
                   } `}
                 >
                   <p
@@ -84,7 +84,7 @@ function Login(props) {
                 </div>
                 <div
                   className={`w-3/6 text-center p-2 ${
-                    !show ? "bg-[#30475E]" : ""
+                    !show ? "bg-[#4C6793]" : ""
                   } `}
                 >
                   <p
@@ -95,7 +95,7 @@ function Login(props) {
                   </p>
                 </div>
               </div>
-              <div>
+              <div className="w-full  ">
                 {show ? (
                   <FormLogin setForgotPass={setForgotPass} />
                 ) : (

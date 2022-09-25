@@ -26,13 +26,14 @@ function App() {
   return (
     <main>
       <Header />
+
       <Routes>
         <Route path="/" element={<Login user={userLogged} />} />
-        <Route path="/profile" element={<Profile />} />
 
         <Route element={<PrivateRoute />}>
           <Route path="/todo" element={<Todo />} />
           <Route path="/post" element={<Post />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </main>

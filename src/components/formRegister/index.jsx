@@ -6,6 +6,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputField from "../Input";
+import fetchDataAPI from "../../api/configApi";
+import { useDispatch } from "react-redux";
+import { registerUser, uploadAvatar } from "../../redux/actions/user";
+import { useNavigate } from "react-router-dom";
 const schema = yup
   .object({
     fullname: yup.string().required(),
@@ -22,6 +26,8 @@ function FormRegister(props) {
   const { setForgotPass } = props;
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImg, setPreviewImg] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -56,11 +62,47 @@ function FormRegister(props) {
       setSelectedFile(null);
     }
   };
-  const onSubmit = (data) => {
-    console.log(data);
+
+  const onSubmit = async (data) => {
+    if (selectedFile === null) {
+      const result = await dispatch(registerUser(data));
+      if (result) {
+        openNotificationWithIcon("success", "Register successfully");
+        setTimeout(() => {
+          navigate(0);
+        }, 1000);
+      }
+    } else {
+      //upload avatar truoc
+      const resultAvatar = await dispatch(uploadAvatar({ file: selectedFile }));
+      if (!resultAvatar.result) {
+        const result = await dispatch(registerUser(data));
+        openNotificationWithIcon(
+          "warning",
+          "Register successfully",
+          "There was an error while updating the image, please try again later"
+        );
+        setTimeout(() => {
+          navigate(0);
+        }, 1000);
+      } else {
+        const result = await dispatch(
+          registerUser({
+            ...data,
+            avatar: resultAvatar.link,
+          })
+        );
+
+        openNotificationWithIcon("success", "Register successfully");
+        setTimeout(() => {
+          navigate(0);
+        }, 1000);
+      }
+      console.log(resultAvatar);
+    }
   };
   return (
-    <div className="bg-[#30475E] p-4">
+    <div className="bg-[#4C6793] p-4">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <p className="error-label">{errors.fullname?.message}</p>
