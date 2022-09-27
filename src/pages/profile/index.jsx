@@ -6,10 +6,8 @@ import { useForm } from "react-hook-form";
 import InputField from "../../components/Input";
 import fetchDataAPI from "../../api/configApi";
 import { useDispatch } from "react-redux";
-import { updateInfoUser, uploadAvatar } from "../../redux/actions/user";
+import { logout, updateInfoUser, uploadAvatar } from "../../redux/actions/user";
 const Profile = (props) => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImg, setPreviewImg] = useState("");
   const dispatch = useDispatch();
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [id, setId] = useState(null);
@@ -21,13 +19,7 @@ const Profile = (props) => {
     formState: { errors },
     watch,
   } = useForm();
-  useEffect(() => {
-    if (selectedFile) {
-      const objectUrl = URL.createObjectURL(selectedFile);
-      // console.log(objectUrl);
-      setPreviewImg(objectUrl);
-    }
-  }, [selectedFile]);
+
   const callData = () => {
     fetchDataAPI("user/profile", "POST")
       .then((res) => {
@@ -36,31 +28,13 @@ const Profile = (props) => {
         setValue("fullname", res.data.message?.fullname);
         setValue("phone", res.data.message?.phone);
         setValue("oldpassword", res.data.message?.password);
-        setPreviewImg(res.data.message?.avatar);
       })
       .catch((err) => console.log(err.response));
   };
   useEffect(() => {
     callData();
   }, []);
-  const handleChange = (file) => {
-    if (file.fileList.length > 0) {
-      if (file.file.type === "image/png" || file.file.type === "image/jpeg") {
-        setSelectedFile(file.file);
-        return;
-      }
-      openNotificationWithIcon(
-        "error",
-        "Invalid image file",
-        "Only file PNG or JPEG images are allowed"
-      );
-      setPreviewImg("");
-      setSelectedFile(null);
-    } else {
-      setPreviewImg("");
-      setSelectedFile(null);
-    }
-  };
+
   const onSubmit = async (data) => {
     //có change password
     if (showChangePassword) {
@@ -79,86 +53,54 @@ const Profile = (props) => {
         );
         return;
       }
-      if (selectedFile) {
-        // có thay đổi avatar
-        const result = await dispatch(uploadAvatar({ file: selectedFile }));
-        //update info
-        const updateInfo = await dispatch(
-          updateInfoUser({
-            phone: data.phone,
-            fullname: data.fullname,
-            password: data.password,
-            _id: id,
-            avatar: result.link,
-          })
-        );
-        if (updateInfo) {
-          openNotificationWithIcon("success", "Update Info Successfully");
-        }
-      } else {
-        //khoông thay đổi avatar
-        const updateInfo = await dispatch(
-          updateInfoUser({
-            phone: data.phone,
-            fullname: data.fullname,
-            password: data.password,
-            _id: id,
-          })
-        );
-        if (updateInfo) {
-          openNotificationWithIcon("success", "Update Info Successfully");
-        }
+      //khoông thay đổi avatar
+      const updateInfo = await dispatch(
+        updateInfoUser({
+          phone: data.phone,
+          fullname: data.fullname,
+          password: data.password,
+          _id: id,
+        })
+      );
+      if (updateInfo) {
+        setTimeout(() => {
+          openNotificationWithIcon(
+            "success",
+            "Update Info Successfully",
+            "Please login again to update infomation"
+          );
+          dispatch(logout());
+          window.location.href = "/";
+        }, 2500);
       }
     } else {
       //cập nhật ko change pass
-      if (selectedFile) {
-        // có thay đổi avatar
-        const result = await dispatch(uploadAvatar({ file: selectedFile }));
-        //update info
-        const updateInfo = await dispatch(
-          updateInfoUser({
-            phone: data.phone,
-            fullname: data.fullname,
-            _id: id,
-            avatar: result.link,
-          })
-        );
-        if (updateInfo) {
-          openNotificationWithIcon("success", "Update Info Successfully");
-        }
-      } else {
-        //khoông thay đổi avatar
-        const updateInfo = await dispatch(
-          updateInfoUser({
-            phone: data.phone,
-            fullname: data.fullname,
-            _id: id,
-          })
-        );
-        if (updateInfo) {
-          openNotificationWithIcon("success", "Update Info Successfully");
-        }
+
+      //khoông thay đổi avatar
+      const updateInfo = await dispatch(
+        updateInfoUser({
+          phone: data.phone,
+          fullname: data.fullname,
+          _id: id,
+        })
+      );
+      if (updateInfo) {
+        setTimeout(() => {
+          openNotificationWithIcon(
+            "success",
+            "Update Info Successfully",
+            "Please login again to update infomation"
+          );
+          dispatch(logout());
+          window.location.href = "/";
+        }, 2500);
       }
     }
-    callData();
   };
   return (
-    <div className="app bg-[#16213E]">
-      <div className="container mx-auto flex-col items-center h-full flex  ">
-        <div className="mt-[20px] text-center">
-          <img
-            className="w-60 h-60 mb-4 object-contain"
-            src={previewImg ? previewImg : ""}
-            alt=""
-          />
-          <Upload
-            maxCount={1}
-            beforeUpload={() => false}
-            onChange={handleChange}
-          >
-            <Button>Upload</Button>
-          </Upload>
-        </div>
+    <div className="app bg-[#16213E] h-screen">
+      <div className="container mx-auto flex-col items-center  flex  ">
+        <div className="mt-[20px] text-center"></div>
         <form
           className="w-full lg:w-3/5 xl:w-3/5 2xl:w-2/5"
           onSubmit={handleSubmit(onSubmit)}

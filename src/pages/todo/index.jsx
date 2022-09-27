@@ -21,7 +21,6 @@ function Todo(props) {
 
   const fetchData = () => {
     fetchDataAPI(`todo/getOne/${user._id}`).then((res) => {
-      console.log(res);
       setTodos(res.data.result);
     });
   };

@@ -24,8 +24,6 @@ const schema = yup
   .required();
 function FormRegister(props) {
   const { setForgotPass } = props;
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewImg, setPreviewImg] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
@@ -37,68 +35,14 @@ function FormRegister(props) {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  useEffect(() => {
-    if (selectedFile) {
-      const objectUrl = URL.createObjectURL(selectedFile);
-      // console.log(objectUrl);
-      setPreviewImg(objectUrl);
-    }
-  }, [selectedFile]);
-  const handleChange = (file) => {
-    if (file.fileList.length > 0) {
-      if (file.file.type === "image/png" || file.file.type === "image/jpeg") {
-        setSelectedFile(file.file);
-        return;
-      }
-      openNotificationWithIcon(
-        "error",
-        "Invalid image file",
-        "Only file PNG or JPEG images are allowed"
-      );
-      setPreviewImg("");
-      setSelectedFile(null);
-    } else {
-      setPreviewImg("");
-      setSelectedFile(null);
-    }
-  };
 
   const onSubmit = async (data) => {
-    if (selectedFile === null) {
-      const result = await dispatch(registerUser(data));
-      if (result) {
-        openNotificationWithIcon("success", "Register successfully");
-        setTimeout(() => {
-          navigate(0);
-        }, 1000);
-      }
-    } else {
-      //upload avatar truoc
-      const resultAvatar = await dispatch(uploadAvatar({ file: selectedFile }));
-      if (!resultAvatar.result) {
-        const result = await dispatch(registerUser(data));
-        openNotificationWithIcon(
-          "warning",
-          "Register successfully",
-          "There was an error while updating the image, please try again later"
-        );
-        setTimeout(() => {
-          navigate(0);
-        }, 1000);
-      } else {
-        const result = await dispatch(
-          registerUser({
-            ...data,
-            avatar: resultAvatar.link,
-          })
-        );
-
-        openNotificationWithIcon("success", "Register successfully");
-        setTimeout(() => {
-          navigate(0);
-        }, 1000);
-      }
-      console.log(resultAvatar);
+    const result = await dispatch(registerUser(data));
+    if (result) {
+      openNotificationWithIcon("success", "Register successfully");
+      setTimeout(() => {
+        navigate(0);
+      }, 1000);
     }
   };
   return (
@@ -160,10 +104,6 @@ function FormRegister(props) {
             required={true}
           />
         </div>
-        <Upload maxCount={1} beforeUpload={() => false} onChange={handleChange}>
-          <Button>Upload</Button>
-        </Upload>
-        <img src={previewImg} alt="" />
         <a
           className="text-sm text-gray-300 hover:text-gray-100"
           onClick={() => setForgotPass(true)}

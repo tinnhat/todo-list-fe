@@ -20,7 +20,6 @@ function Post(props) {
   } = useForm();
   const fetchData = () => {
     fetchDataAPI(`api/getAll`).then((res) => {
-      console.log(res);
       setPosts(res.data);
     });
   };
