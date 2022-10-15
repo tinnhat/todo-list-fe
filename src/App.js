@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 import "./App.css";
 import Header from "./components/header";
+import Error from "./pages/error";
 import Login from "./pages/login";
 import Post from "./pages/post";
 import Profile from "./pages/profile";
@@ -34,6 +35,7 @@ function App() {
           <Route path="/todo" element={<Todo />} />
           <Route path="/post" element={<Post />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="*" element={<Error />} />
         </Route>
       </Routes>
     </main>
